@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "useUnknownInCatchVariables": false,
+    "target": "es5",
+    "module": "commonjs",
+    "lib": ["es2017", "es7", "es6", "dom"],
+    "declaration": true,
+    "outDir": "./",
+    "strict": true,
+    "esModuleInterop": true,
+    "types": [
+      "@types/jest"
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "files": [
+    "index.ts"
+  ]
+}
