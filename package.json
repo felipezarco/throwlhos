@@ -1,6 +1,6 @@
 {
   "name": "throwlhos",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Thorw error objects directly from express response",
   "main": "index.js",
   "types": "index",
