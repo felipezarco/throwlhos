@@ -5,10 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var http_status_codes_1 = __importDefault(require("http-status-codes"));
 var camelCase = function (str) { return str.toLowerCase().replace(/(\_\w)/g, function (c) { return c[1].toUpperCase(); }); };
-var throwlhos = function (request, response, next) {
+var addThrowlhosToObject = function (object) {
     var _loop_1 = function (httpStatus, httpCode) {
         if (!httpStatus.startsWith('get') && typeof httpCode !== 'function' && !['1', '2'].includes(String(httpCode).charAt(0))) {
-            response['err_' + camelCase(httpStatus)] = function (message, errors) {
+            object['err_' + camelCase(httpStatus)] = function (message, errors) {
                 return {
                     code: httpCode,
                     status: httpStatus,
@@ -22,6 +22,12 @@ var throwlhos = function (request, response, next) {
         var _b = _a[_i], httpStatus = _b[0], httpCode = _b[1];
         _loop_1(httpStatus, httpCode);
     }
-    next();
 };
+var throwlhos = {
+    middleware: function (request, response, next) {
+        addThrowlhosToObject(response);
+        next();
+    }
+};
+addThrowlhosToObject(throwlhos);
 exports.default = throwlhos;

@@ -21,27 +21,67 @@ Use your favorite package manager to install. For instance:
   yarn add throwlhos
 ```
 
-Then import it:
-
-```javascript
-import throwlhos from 'throwlhos'
-```
-
-**Add `throwlhos` as an express middleware**:
+## Basic Usage
 
 ```typescript
-app.use(throwlhos)
+import throwlhos from 'throwlhos'
+import { Request, Response } from 'express'
+
+class FooBarController {
+  async index(request: Request, response: Response) {
+    connsole.log(throwlhos.err_internalServerError())
+    // IThrowlhos object
+  }
+}
 ```
 
-And you're good to go!
+Above code prompts the following output:
+```typescript
+{
+  code: 500,
+  status: 'INTERNAL_SERVER_ERROR',
+  message: 'Internal Server Error'
+} 
+```
 
-## Usage
+`err_*` methods accept two **optional** parameters:
+```typescript
+message?: string | null
+errors?: any
+```
+
+Returned `throwlhos` object type exaplained:
+
+````typescript
+export type IThrowlhos = {
+  code: number
+  status: string
+  message: string
+  errors: any
+}
+````
+* `code`: Number value of `HTTP Status Code`
+
+* `status`: String value of `HTTP Status Name`
+
+* `message`: Given message as first parameter. Or `HTTP Status Name human-readable` if `null` or none is given.
+
+* `errors`: Anything given as a second parameter. It is `undefined` if none is given.
+
+## Throwlhos as an express middleware
+
+**You can use `throwlhos` as an express middleware**:
+
+```typescript
+app.use(throwlhos.middlware)
+```
 
 Since `throwlhos` overwrites [Express](https://www.npmjs.com/package/express) interface, you can find `throwlhos` `err_*` methods directly in express response! 
 
 Consider the following code which is an [express middlware](https://expressjs.com/en/guide/writing-middleware.html):
 
 ```typescript
+import throwlhos from 'throwlhos'
 import { Request, Response } from 'express'
 
 class FooBarController {
@@ -65,32 +105,6 @@ errors-Type: application/json; charset=utf-8
   message: 'Internal Server Error'
 } 
 ```
-
-`err_*` methods accept two **optional** parameters:
-
-```typescript
-message?: string | null
-errors?: {}
-```
-
-Returned `throwlhos` object type exaplained:
-
-````typescript
-export type IThrowlhos = {
-  code: number
-  status: string
-  message: string
-  errors: any
-}
-````
-
-* `code`: Number value of `HTTP Status Code`
-
-* `status`: String value of `HTTP Status Name`
-
-* `message`: Given message as first parameter. Or `HTTP Status Name human-readable` if `null` or none is given.
-
-* `errors`: Anything given as a second parameter. It is `undefined` if none is given.
 
 ## Methods
 
@@ -164,7 +178,7 @@ Full example:
       return next(err)
     }
   })
-  app.use(throwlhos)
+  app.use(throwlhos.middlware)
   app.use(router)
   app.use(errorHandler)
 ```

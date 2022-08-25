@@ -5,9 +5,42 @@ import errorHandler from 'responserror'
 import request from 'supertest'
 import responser from 'responser'
 
-test('it returns correctly formated object', async () => {
+test('it returns correctly formated object (object)', async () => {
+  const notFoundThrowlhos: IThrowlhos = throwlhos.err_notFound('Sorry, something is missing!', {
+    tryToFind: 'whereIHaveBeen'
+  })
+  expect(notFoundThrowlhos).toEqual({
+    message: 'Sorry, something is missing!',
+    code: 404,
+    status: 'NOT_FOUND',
+    errors: {
+      tryToFind: 'whereIHaveBeen'
+    }
+  })
+})
+
+test('it accepts no parameters call', async () => {
+  const notFoundThrowlhos: IThrowlhos = throwlhos.err_notFound()
+  expect(notFoundThrowlhos).toEqual({
+    message: 'Not Found',
+    code: 404,
+    status: 'NOT_FOUND'
+  })
+})
+
+test('it accepts null message with content', async () => {
+  const notFoundThrowlhos: IThrowlhos = throwlhos.err_notFound(null, ['HardToReadException'])
+  expect(notFoundThrowlhos).toEqual({
+    message: 'Not Found',
+    code: 404,
+    status: 'NOT_FOUND',
+    errors: ['HardToReadException']
+  })
+})
+
+test('it returns correctly formated object (middleware)', async () => {
   const app = express()
-  app.use(throwlhos)
+  app.use(throwlhos.middleware)
   app.use(responser)
   const router = express.Router()
   router.post('/resources', (_, response: Response, next: NextFunction) => {
@@ -30,7 +63,7 @@ test('it returns correctly formated object', async () => {
 
 test('it returns correctly when no params are given', async () => {
   const app = express()
-  app.use(throwlhos)
+  app.use(throwlhos.middleware)
   app.use(responser)
   const router = express.Router()
   router.post('/resources', (_, response: Response, next: NextFunction) => {
@@ -48,7 +81,7 @@ test('it returns correctly when no params are given', async () => {
 
 test('it throws correctly with responserror handler', async () => {
   const app = express()
-  app.use(throwlhos)
+  app.use(throwlhos.middleware)
   const router = express.Router()
   router.post('/resources', (_, response: Response, next: NextFunction) => {
     try {
@@ -74,7 +107,7 @@ test('it throws correctly with responserror handler', async () => {
 test('it throws correctly with responser and responserror handler', async () => {
   const app = express()
   app.use(responser)
-  app.use(throwlhos)
+  app.use(throwlhos.middleware)
   const router = express.Router()
   router.post('/resources', (_, response: Response, next: NextFunction) => {
     try {
@@ -100,7 +133,7 @@ test('it throws correctly with responser and responserror handler', async () => 
 test('it throws correctly with responser and responserror handler without errors', async () => {
   const app = express()
   app.use(responser)
-  app.use(throwlhos)
+  app.use(throwlhos.middleware)
   const router = express.Router()
   router.post('/resources', (_, response: Response, next: NextFunction) => {
     try {
