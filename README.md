@@ -184,6 +184,10 @@ errors-Type: application/json; charset=utf-8
 }
 ```
 
+## More
+
+Special thanks to my fellow engineer [Estanis](https://github.com/Christopher-Estanis) as his words where my inspiration in the naming of the package.
+
 ## Testing
 
 Run the test suit with `yarn test`.
