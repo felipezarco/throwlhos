@@ -1,11 +1,11 @@
 # Throwlhos
 
-> Throw error objects directly from express response
+> Throws error objects with status and code
 
 ```typescript
 throw Error('What the heck goes here?...')
 ```
-So... You do not know exactly what to throw?! We've got you covered!
+You do not know exactly what to throw?! We've got you covered! 
 ![image](https://user-images.githubusercontent.com/11004919/186556459-a515de65-2adc-43b7-a2fc-1eb0a2be076c.png)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![npm version](https://badge.fury.io/js/throwlhos.svg)](https://badge.fury.io/js/felipezarco%2Fthrowlhos) [![Build Status](https://travis-ci.org/felipezarco/throwlhos.svg?branch=master)](https://travis-ci.org/felipezarco/throwlhos) [![Coverage Status](https://coveralls.io/repos/github/felipezarco/throwlhos/badge.svg?branch=master)](https://coveralls.io/github/felipezarco/throwlhos?branch=master) ![Downloads](https://img.shields.io/npm/dw/throwlhos)
 
@@ -29,7 +29,7 @@ import { Request, Response } from 'express'
 
 class FooBarController {
   async index(request: Request, response: Response) {
-    connsole.log(throwlhos.err_internalServerError())
+    console.log(throwlhos.err_internalServerError())
     // IThrowlhos object
   }
 }
@@ -50,7 +50,7 @@ message?: string | null
 errors?: any
 ```
 
-Returned `throwlhos` object type exaplained:
+Returned **`throwlhos`** object type exaplained:
 
 ````typescript
 export type IThrowlhos = {
@@ -60,23 +60,23 @@ export type IThrowlhos = {
   errors: any
 }
 ````
-* `code`: Number value of `HTTP Status Code`
+* **`code`**: Number value of `HTTP Status Code`
 
-* `status`: String value of `HTTP Status Name`
+* **`status`**: String value of `HTTP Status Name`
 
-* `message`: Given message as first parameter. Or `HTTP Status Name human-readable` if `null` or none is given.
+* **`message`**: Message given at first parameter or `HTTP Status Name human-readable` if none or **null** is given.
 
-* `errors`: Anything given as a second parameter. It is `undefined` if none is given.
+* **`errors`**: Anything given as the second parameter. It's `undefined` if no value is given.
 
 ## Throwlhos as an express middleware
 
-**You can use `throwlhos` as an express middleware**:
+You can use **`throwlhos`** as an express middleware:
 
 ```typescript
 app.use(throwlhos.middlware)
 ```
 
-Since `throwlhos` overwrites [Express](https://www.npmjs.com/package/express) interface, you can find `throwlhos` `err_*` methods directly in express response! 
+Since **`throwlhos`** overwrites [Express](https://www.npmjs.com/package/express) interface, you can find **`throwlhos`** `err_*` methods directly in express response! 
 
 Consider the following code which is an [express middlware](https://expressjs.com/en/guide/writing-middleware.html):
 
@@ -106,7 +106,47 @@ errors-Type: application/json; charset=utf-8
 } 
 ```
 
-## Methods
+## Usage with an express Error Handler (recommended)
+
+If you want to quickly send an error response with your **`throwlhos`** use it with [responserror](https://www.npmjs.com/package/throwlhos).
+
+Responserror handler will catch-all errors from any express middleware router in-between by using `next(err)` .
+
+Full example:
+
+```typescript
+  import throwlhos from 'throwlhos'
+  import errorHandler from 'responserror'
+  const app = express()
+  const router = express.Router()
+  router.post('/resources', (_, response: Response, next: NextFunction) => {
+    try {
+      throw response.err_forbidden('Access denied.. Sorry')
+    } catch(err) {
+      return next(err)
+    }
+  })
+  app.use(throwlhos.middlware)
+  app.use(router)
+  app.use(errorHandler)
+```
+
+`POST /resources` outputs:
+```
+HTTP/1.1 403 FORBIDDEN
+X-Powered-By: Express
+errors-Type: application/json; charset=utf-8
+```
+```typescript
+{
+  code: 403,
+  status: 'FORBIDDEN',
+  message: 'Access denied.. Sorry',
+  success: false
+}
+```
+
+## Available Methods
 
 Throwlhos currently supports following methods:
 
@@ -158,46 +198,6 @@ err_insufficientStorage // Insufficient Storage
 err_networkAuthenticationRequired // Network Authentication Required
 ````
 
-## Error Handler (recommended)
-
-If you want to quickly send an error response with your `throwlhos` use it with [responserror](https://www.npmjs.com/package/throwlhos).
-
-Responserror handler will catch-all errors from any express middleware router in-between by using `next(err)` .
-
-Full example:
-
-```typescript
-  import throwlhos from 'throwlhos'
-  import errorHandler from 'responserror'
-  const app = express()
-  const router = express.Router()
-  router.post('/resources', (_, response: Response, next: NextFunction) => {
-    try {
-      throw response.err_forbidden('Access denied.. Sorry')
-    } catch(err) {
-      return next(err)
-    }
-  })
-  app.use(throwlhos.middlware)
-  app.use(router)
-  app.use(errorHandler)
-```
-
-`POST /resources` outputs:
-```
-HTTP/1.1 403 FORBIDDEN
-X-Powered-By: Express
-errors-Type: application/json; charset=utf-8
-```
-```typescript
-{
-  code: 403,
-  status: 'FORBIDDEN',
-  message: 'Access denied.. Sorry',
-  success: false
-}
-```
-
 ## More
 
 Special thanks to my fellow engineer [Estanis](https://github.com/Christopher-Estanis) as his words where my inspiration in the naming of the package.
@@ -216,7 +216,11 @@ If you want to contribute in any of theses ways:
 - Enhance the code or its documentation
 - Help in any other way
 
-You can (and should) [open an issue](https://github.com/felipezarco/throwlhos/issues/new) or even a [pull request](https://github.com/felipezarco/throwlhos/compare)!
+You can (and should) [open an issue](https://github.com/felipezarco/throwlhos/issues/new) or even a [pull request](https://github.com/felipezarco/throwlhos/compare).
+
+Has this package been useful for you? 
+
+If so, you can **contribute by giving it a Star ⭐** at the [GitHub Repository](https://github.com/felipezarco/throwlhos)!
 
 Thanks for your interest in contributing to this repo!
 
