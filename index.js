@@ -22,6 +22,14 @@ var addThrowlhosToObject = function (object) {
         var _b = _a[_i], httpStatus = _b[0], httpCode = _b[1];
         _loop_1(httpStatus, httpCode);
     }
+    object['err_custom'] = function (message, code, errors) {
+        return {
+            message: message,
+            code: code,
+            status: 'CUSTOM_ERROR',
+            errors: errors,
+        };
+    };
 };
 var throwlhos = {
     middleware: function (request, response, next) {

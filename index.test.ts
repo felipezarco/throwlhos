@@ -1,5 +1,5 @@
 
-import express, { NextFunction, Request, response, Response } from 'express'
+import express, { NextFunction, Response } from 'express'
 import throwlhos, { IThrowlhos } from './index'
 import errorHandler from 'responserror'
 import request from 'supertest'
@@ -150,5 +150,32 @@ test('it throws correctly with responser and responserror handler without errors
     status: 'FORBIDDEN',
     message: 'Acesso negado!!',
     success: false
+  })
+})
+
+test('it can throw custom errors', async () => {
+  const app = express()
+  app.use(responser)
+  app.use(throwlhos.middleware)
+  const router = express.Router()
+  router.post('/resources', (_, response: Response, next: NextFunction) => {
+    try {
+      const randomObject = { fruit: 'banana' }
+      throw response.err_custom('This is a custom error!', 500, randomObject)
+    } catch(err) {
+      return next(err)
+    }
+  })
+  /* @ts-ignore */
+  app.use(router, errorHandler)
+  const response = await request(app).post('/resources')
+  expect(response.body).toEqual({
+    code: 500,
+    status: 'CUSTOM_ERROR',
+    message: 'This is a custom error!',
+    success: false,
+    errors: {
+      fruit: 'banana'
+    }
   })
 })

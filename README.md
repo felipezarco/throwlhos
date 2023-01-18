@@ -196,6 +196,7 @@ err_gatewayTimeout // Gateway Timeout
 err_httpVersionNotSupported // HTTP Version Not Supported
 err_insufficientStorage // Insufficient Storage
 err_networkAuthenticationRequired // Network Authentication Required
+err_custom // Custom Error (provide message, code and errors)
 ````
 
 ## More

@@ -8,6 +8,9 @@ export declare type IThrowlhos = {
 declare type IThrow = {
     function(message?: string | null, errors?: {}): IThrowlhos;
 };
+declare type ICustomThrow = {
+    function(message: string, code: number, errors?: any): IThrowlhos;
+};
 interface IThrolhosImportObject {
     middleware: (request: Request, response: Response, next: NextFunction) => void;
     err_multipleChoices: IThrow['function'];
@@ -104,6 +107,7 @@ declare global {
             err_httpVersionNotSupported: IThrow['function'];
             err_insufficientStorage: IThrow['function'];
             err_networkAuthenticationRequired: IThrow['function'];
+            err_custom: ICustomThrow['function'];
         }
     }
 }
