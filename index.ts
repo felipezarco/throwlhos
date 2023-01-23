@@ -65,6 +65,7 @@ interface IThrolhosImportObject {
   err_httpVersionNotSupported: IThrow['function']
   err_insufficientStorage: IThrow['function']
   err_networkAuthenticationRequired: IThrow['function']
+  err_custom: ICustomThrow['function']
 }
   
 
