@@ -1,6 +1,6 @@
 # Throwlhos
 
-> Throws error objects with status and code
+> Throws response errors on Express
 
 ```typescript
 throw Error('What the heck goes here?...')
