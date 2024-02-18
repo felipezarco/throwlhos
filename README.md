@@ -3,9 +3,15 @@
 > Throws response errors on Express
 
 ```typescript
-throw Error('What the heck goes here?...')
+throw Error(... // So what the heck goes here?
 ```
 You do not know exactly what to throw?! We've got you covered! 
+
+Example:
+```typescript
+throw throwlhos.err_internalServerError('Oops..! Something went wrong!', error)
+```
+
 ![image](https://user-images.githubusercontent.com/11004919/186556459-a515de65-2adc-43b7-a2fc-1eb0a2be076c.png)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![npm version](https://badge.fury.io/js/throwlhos.svg)](https://badge.fury.io/js/felipezarco%2Fthrowlhos) [![Build Status](https://travis-ci.org/felipezarco/throwlhos.svg?branch=master)](https://travis-ci.org/felipezarco/throwlhos) [![Coverage Status](https://coveralls.io/repos/github/felipezarco/throwlhos/badge.svg?branch=master)](https://coveralls.io/github/felipezarco/throwlhos?branch=master) ![Downloads](https://img.shields.io/npm/dw/throwlhos)
 
