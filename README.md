@@ -54,10 +54,14 @@ Above code prompts the following output:
 } 
 ```
 
-`err_*` methods accept two **optional** parameters:
+`err_*` methods accept three **optional** parameters:
 ```typescript
 message?: string | null
 errors?: any
+i18n?: {
+  key: string
+  options?: Record<string, any>
+}
 ```
 
 Returned **`throwlhos`** object type exaplained:
@@ -68,6 +72,10 @@ export type IThrowlhos = {
   status: string
   message: string
   errors: any
+  i18n?: {
+    key: string
+    options: Record<string, any>
+  }
 }
 ````
 * **`code`**: Number value of `HTTP Status Code`
@@ -77,6 +85,8 @@ export type IThrowlhos = {
 * **`message`**: Message given at first parameter or `HTTP Status Name human-readable` if none or **null** is given.
 
 * **`errors`**: Anything given as the second parameter. It's `undefined` if no value is given.
+
+* **`i18n`**: Object with key and options values at the third parameter. You can use this to easily integrate with your own i18n system
 
 ## Throwlhos as an express middleware
 
@@ -154,6 +164,76 @@ errors-Type: application/json; charset=utf-8
   message: 'Access denied.. Sorry',
   success: false
 }
+```
+
+## Usage with i18n
+The i18n object enables straightforward integration with internationalization libraries. When using throwlhos, we recommend implementing a middleware layer to convert the default message to a translated version using the i18n.key.
+
+**Note**: For proper errorHandler with i18n functionality, the translation middleware should execute before the error middleware, returning either the translated error or the default message when no valid translation key exists.
+
+## Explaining i18n parameter:
+
+```typescript
+i18n?: {
+  key: string // Translation key (e.g., 'errors.validation.email_required')
+  options?: Record<string, any> // Parameters for interpolation
+  // Example: { field: 'email', min: 5, max: 100 }
+}
+```
+
+### Example of use
+```tsx
+app.post('/users', (req, res) => {
+  const user = req.body
+  
+  if (!user.email) {
+    // Using i18n without errors
+    throw res.err_badRequest(
+      'Email is required',
+      undefined,  // ← explicitly passing undefined for errors
+      { 
+        key: 'validation.email_required',
+        options: { field: 'email' }
+      }
+    )
+  }
+  
+  if (!isValidEmail(user.email)) {
+    // Using i18n with errors
+    throw res.err_badRequest(
+      'Invalid email format',
+      { field: 'email', value: user.email },
+      { 
+        key: 'validation.invalid_email',
+        options: { email: user.email }
+      }
+    )
+  }
+})
+```
+
+## Usage with an i18n middleware translator
+Example using i18next
+```typescript
+import i18next from 'i18next'
+
+function i18nErrorMiddleware(err, req, res, next) {
+  if (err.i18n?.key && req.i18n) {
+    err.message = 
+      req.t(err.i18n.key, {...err.i18n.options }) || 
+      err.message
+  }
+  
+  delete err.i18n
+  
+  next(err)
+}
+
+app.use(i18next.middleware)
+app.use(throwlhos.middleware)
+app.use(routes)
+app.use(i18nErrorMiddleware)
+app.use(errorHandler)
 ```
 
 ## Available Methods
