@@ -192,23 +192,33 @@ test('it can throw custom errors', async () => {
   })
 })
 
-test('it accepts i18n object without i18n.options', async () => {
-  const notFoundThrowlhos: IThrowlhos = throwlhos.err_notFound('Not Found', undefined, { key: 'error.not_found' })
+test('it accepts i18n object without i18n.options using err_*', async () => {
+  const notFoundThrowlhos: IThrowlhos = throwlhos.err_notFound('Not Found without i18n.options', undefined, { key: 'error.not_found' })
   expect(notFoundThrowlhos).toEqual({
-    message: 'Not Found',
+    message: 'Not Found without i18n.options',
     code: 404,
     status: 'NOT_FOUND',
     i18n: { key: 'error.not_found' }
   })
 })
 
-test('it accepts i18n object with i18n.options', async () => {
-  const notFoundThrowlhos: IThrowlhos = throwlhos.err_notFound('Not Found', { }, { key: 'error.not_found', options: { resource: 'item' } })
+test('it accepts i18n object with i18n.options using err_*', async () => {
+  const notFoundThrowlhos: IThrowlhos = throwlhos.err_notFound('Not Found with i18n.options', { }, { key: 'error.not_found', options: { resource: 'item' } })
   expect(notFoundThrowlhos).toEqual({
-    message: 'Not Found',
+    message: 'Not Found with i18n.options',
     code: 404,
     status: 'NOT_FOUND',
     i18n: { key: 'error.not_found', options: { resource: 'item' } }
+  })
+})
+
+test('it accepts i18n object using err_custom', async () => {
+  const customThrowlhos: IThrowlhos = throwlhos.err_custom('Custom error with i18n', 404, { }, { key: 'error.custom', options: { resource: 'item' } })
+  expect(customThrowlhos).toEqual({
+    message: 'Custom error with i18n',
+    code: 404,
+    status: 'CUSTOM_ERROR',
+    i18n: { key: 'error.custom', options: { resource: 'item' } }
   })
 })
 
