@@ -3,19 +3,25 @@ import HttpStatus from 'http-status-codes'
 
 const camelCase = (str: string) => str.toLowerCase().replace(/(\_\w)/g, c => c[1].toUpperCase())
 
+export type I18nMessage= {
+  key: string
+  options?: Record<string, any>
+}
+
 export type IThrowlhos = {
   code: number
   status: string
   message: string
   errors: any
+  i18n?: I18nMessage
 }
 
 type IThrow = {
-  function(message?: string | null, errors?: {}): IThrowlhos
+  function(message?: string | null, errors?: {}, i18n?: I18nMessage): IThrowlhos
 }
 
 type ICustomThrow = {
-  function(message: string, code: number, errors?: any): IThrowlhos
+  function(message: string, code: number, errors?: any, i18n?: I18nMessage): IThrowlhos
 }
 
 interface IThrolhosImportObject {
@@ -125,23 +131,42 @@ declare global {
 const addThrowlhosToObject = function(object: any) {
   for(const [httpStatus, httpCode] of Object.entries(HttpStatus)) {
     if(!httpStatus.startsWith('get') && typeof httpCode !== 'function' && !['1','2'].includes(String(httpCode).charAt(0))) {
-      (object as any)['err_' + camelCase(httpStatus)] = function (message?: string | null, errors?: any): IThrowlhos {
-        return {
+      (object as any)['err_' + camelCase(httpStatus)] = function (message?: string | null, errors?: any, i18n?: I18nMessage): IThrowlhos {
+        const result = {
           code: httpCode,
           status: httpStatus,
-          message: message ?? HttpStatus.getStatusText(String(httpCode)),
-          errors: errors,
+          message: message ?? HttpStatus.getStatusText(String(httpCode))
         } as IThrowlhos
+
+        if(errors && Object.keys(errors).length > 0) {
+          result.errors = errors
+        }
+
+        if(i18n) {
+          result.i18n = i18n
+        }
+
+        return result
       }
     }
   }
-  (object as any)['err_custom'] = function (message: string, code: number, errors?: any): IThrowlhos {
-    return {
+  (object as any)['err_custom'] = function (message: string, code: number, errors?: any, i18n?: I18nMessage): IThrowlhos {
+    
+    const result: IThrowlhos = {
       message: message,
       code: code,
-      status: 'CUSTOM_ERROR',
-      errors: errors,
+      status: 'CUSTOM_ERROR'
     } as IThrowlhos
+
+    if(errors && Object.keys(errors).length > 0) {
+      result.errors = errors
+    }
+
+    if(i18n) {
+      result.i18n = i18n
+    }
+
+    return result
   }
 }
 
