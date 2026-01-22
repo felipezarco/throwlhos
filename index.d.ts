@@ -1,15 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
+export declare type I18nMessage = {
+    key: string;
+    options?: Record<string, any>;
+};
 export declare type IThrowlhos = {
     code: number;
     status: string;
     message: string;
     errors: any;
+    i18n?: I18nMessage;
 };
 declare type IThrow = {
-    function(message?: string | null, errors?: {}): IThrowlhos;
+    function(message?: string | null, errors?: {}, i18n?: I18nMessage): IThrowlhos;
 };
 declare type ICustomThrow = {
-    function(message: string, code: number, errors?: any): IThrowlhos;
+    function(message: string, code: number, errors?: any, i18n?: I18nMessage): IThrowlhos;
 };
 interface IThrolhosImportObject {
     middleware: (request: Request, response: Response, next: NextFunction) => void;
@@ -58,6 +63,7 @@ interface IThrolhosImportObject {
     err_httpVersionNotSupported: IThrow['function'];
     err_insufficientStorage: IThrow['function'];
     err_networkAuthenticationRequired: IThrow['function'];
+    err_custom: ICustomThrow['function'];
 }
 declare global {
     namespace Express {
